@@ -37,6 +37,7 @@
                                     <option value="personal">Pessoal</option>
                                     <option value="work">Trabalho</option>
                                     <option value="study">Estudo</option>
+                                    <option value="reminder">Lembrete</option>
                                 </select>
                             </div>
                             <button type="submit" class="btn btn-primary w-100">Criar Tarefa</button>
@@ -65,6 +66,12 @@
                                 </label>
                             </div>
                             <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="execution-trigger">
+                                <label class="form-check-label" for="execution-trigger">
+                                    Sem duração de execução
+                                </label>
+                            </div>
+                            <div class="form-check">
                                 <input class="form-check-input" type="checkbox" id="color-label">
                                 <label class="form-check-label" for="color-label">
                                     Etiqueta Colorida
@@ -83,6 +90,7 @@
                                 </label>
                                 <input type="date" class="form-control form-control-sm mt-1" id="due-date-input">
                             </div>
+                            
                         </div>
                         <button id="apply-decorators" class="btn btn-success w-100">Aplicar Recursos</button>
                     </div>
@@ -133,6 +141,12 @@
                                     Log no Console
                                 </label>
                             </div>
+                            <div class="api-check">
+                                <input class="form-check-input" type="checkbox" id="api-observer" checked>
+                                <label class="form-check-label" for="api-observer">
+                                     API
+                                </label>
+                            </div>
                         </div>
                         <hr>
                         <h5>Histórico de Notificações</h5>
@@ -168,15 +182,15 @@
                                         <p><strong>Implementação:</strong> Usamos o Factory Method para criar diferentes tipos de tarefas (Pessoal, Trabalho, Estudo) sem expor a lógica de criação ao usuário.</p>
                                         <p><strong>Benefício:</strong> Facilita a adição de novos tipos de tarefas sem modificar o código que usa as tarefas.</p>
                                         <pre><code>// Exemplo simplificado
-class TaskFactory {
-    createTask(type, title, description) {
-        switch(type) {
-            case 'personal': return new PersonalTask(title, description);
-            case 'work': return new WorkTask(title, description);
-            case 'study': return new StudyTask(title, description);
-        }
-    }
-}</code></pre>
+                                            class TaskFactory {
+                                                createTask(type, title, description) {
+                                                    switch(type) {
+                                                        case 'personal': return new PersonalTask(title, description);
+                                                        case 'work': return new WorkTask(title, description);
+                                                        case 'study': return new StudyTask(title, description);
+                                                    }
+                                                }
+                                            }</code></pre>
                                     </div>
                                 </div>
                             </div>
@@ -192,11 +206,11 @@ class TaskFactory {
                                         <p><strong>Implementação:</strong> Usamos Decorators para adicionar comportamentos como Alta Prioridade, Etiquetas Coloridas e Datas de Vencimento às tarefas existentes.</p>
                                         <p><strong>Benefício:</strong> Permite combinar comportamentos de forma flexível sem criar uma explosão de subclasses.</p>
                                         <pre><code>// Exemplo simplificado
-class HighPriorityDecorator extends TaskDecorator {
-    getDescription() {
-        return `⭐ PRIORIDADE ALTA: ${this.task.getDescription()}`;
-    }
-}</code></pre>
+                                        class HighPriorityDecorator extends TaskDecorator {
+                                            getDescription() {
+                                                return `⭐ PRIORIDADE ALTA: ${this.task.getDescription()}`;
+                                            }
+                                        }</code></pre>
                                     </div>
                                 </div>
                             </div>
@@ -212,21 +226,21 @@ class HighPriorityDecorator extends TaskDecorator {
                                         <p><strong>Implementação:</strong> Usamos o Observer para notificar diferentes canais (Tela, Email simulado, Log) quando o status de uma tarefa muda.</p>
                                         <p><strong>Benefício:</strong> Desacopla o objeto observado dos observadores, permitindo adicionar novos observadores sem modificar o objeto.</p>
                                         <pre><code>// Exemplo simplificado
-class TaskSubject {
-    constructor() {
-        this.observers = [];
-    }
-    
-    addObserver(observer) {
-        this.observers.push(observer);
-    }
-    
-    notifyObservers(task, status) {
-        this.observers.forEach(observer => {
-            observer.update(task, status);
-        });
-    }
-}</code></pre>
+                                        class TaskSubject {
+                                            constructor() {
+                                                this.observers = [];
+                                            }
+                                            
+                                            addObserver(observer) {
+                                                this.observers.push(observer);
+                                            }
+                                            
+                                            notifyObservers(task, status) {
+                                                this.observers.forEach(observer => {
+                                                    observer.update(task, status);
+                                                });
+                                            }
+                                        }</code></pre>
                                     </div>
                                 </div>
                             </div>

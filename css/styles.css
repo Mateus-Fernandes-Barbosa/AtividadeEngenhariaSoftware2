@@ -60,6 +60,10 @@ header {
     border-left: 5px solid #20c997;
 }
 
+.task-reminder {
+    border-left: 5px solid #2031c9;
+}
+
 /* Estilos para decoradores */
 .high-priority-task {
     background-color: rgba(255, 0, 0, 0.05);
@@ -104,6 +108,10 @@ header {
 
 .notification-log {
     border-left: 3px solid #198754;
+}
+
+.api-log {
+    border-left: 3px solid #7c8719;
 }
 
 pre {

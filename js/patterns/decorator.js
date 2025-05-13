@@ -5,10 +5,23 @@
  * a objetos dinamicamente, envolvendo-os em objetos "wrapper" especiais.
  */
 
-/**
- * Classe base para os decoradores de tarefa
+
+
+/* Semelhante a aceitar qualquer interface ITask, em que task
+ * e TaskDecorator implementam essa mesma interface. 
+ *
+ * Decorator pode recursivamente chamar outro decorator interno como
+ * variavel task. 
+ * 
+ * Logo a classe atual devera percorrer para todos os outros
+ * decorators ate atingir a task destino. 
+ * 
+ * Representacoes html tambem sao obtidas dessa forma recursiva, em que
+ * devera ser consultado todos os decoradores e lentamente construir aqueles no
+ * qual a representacao html nao foi feita
  */
 class TaskDecorator {
+
     constructor(task) {
         this.task = task;
     }
@@ -51,21 +64,26 @@ class TaskDecorator {
  */
 class HighPriorityDecorator extends TaskDecorator {
     getTitle() {
-        let result = this.task.getTitle();
-        if(this.task.getTitle().includes('⭐') == false){
-            result = `⭐ ${this.task.getTitle()}`;
+        const title = this.task.getTitle();
+        if (!title.includes('⭐')) {
+            return `⭐ ${this.task.getTitle()}`;
         }
-            
-        return result;
+        return title;
     }
     
     getHtmlRepresentation() {
         let html = this.task.getHtmlRepresentation();
-        if(html.includes('list-group-item task-item high-priority-task') == false){
-            html = html.replace('list-group-item task-item', 'list-group-item task-item high-priority-task');
-            // Adicionando badge de prioridade alta
-            html = html.replace('<span class="badge', '<span class="badge bg-danger me-2">PRIORITÁRIO</span><span class="badge');   
-        }    
+        
+        // Add high-priority-task if not present
+        let groupItemTag = 'list-group-item task-item';
+        let priorityTag = 'high-priority-task';
+        if (!html.includes(priorityTag)) {
+
+            html = html.replace(groupItemTag, `${groupItemTag} ${priorityTag}`);
+
+            // Add new badge to indicate its priority along with type
+            html = html.replace('<span class="badge', '<span class="badge bg-danger me-2">PRIORITÁRIO</span><span class="badge');
+        }
         return html;
     }
 }
@@ -81,28 +99,32 @@ class ColorLabelDecorator extends TaskDecorator {
     
     getHtmlRepresentation() {
         let html = this.task.getHtmlRepresentation();
-        // Adicionando etiqueta colorida
-        if(html.includes('<span class="badge label-red')){
-            if(this.color != 'red'){
-                html = html.replace('<span class="badge', `<span class="badge label-${this.color} me-2">${this.getColorName()}</span><span class="badge`);
+
+
+        const wrapper = document.createElement('div');
+        const colors = ['label-red', 'label-green', 'label-blue', 'label-yellow'];
+
+        
+        wrapper.innerHTML = html;
+        const existingLabels = wrapper.querySelectorAll('span.badge');
+        for (const label of existingLabels) {
+            // If classlist include one of the colors labels
+            if ([...label.classList].some(cls => colors.includes(cls))) {
+                label.remove();
             }
         }
-        else if(html.includes('<span class="badge label-red')){
-            if(this.color != 'red'){
-                html = html.replace('<span class="badge', `<span class="badge label-${this.color} me-2">${this.getColorName()}</span><span class="badge`);
-            }
+
+        if (existingLabels) {
+            const firstLabel = existingLabels[0];
+            const newlabel = document.createElement('span');
+            newlabel.className = `badge label-${this.color} me-2`;
+            newlabel.textContent = this.getColorName();
+            firstLabel.parentNode.insertBefore(newlabel, firstLabel);
         }
-        else if(html.includes('<span class="badge label-red')){
-            if(this.color != 'red'){
-                html = html.replace('<span class="badge', `<span class="badge label-${this.color} me-2">${this.getColorName()}</span><span class="badge`);
-            }
-        }
-        else{
-            html = html.replace('<span class="badge', `<span class="badge label-${this.color} me-2">${this.getColorName()}</span><span class="badge`);
-        }
+        html = wrapper.innerHTML;
+    
         
         return html;
-        
     }
     
     getColorName() {
@@ -131,10 +153,44 @@ class DueDateDecorator extends TaskDecorator {
         const formattedDate = this.dueDate.toLocaleDateString();
         
         // Adicionar a data de vencimento após a data de criação
-        html = html.replace(
-            `Criada em: ${this.task.getCreatedAt().toLocaleString()}`,
-            `Criada em: ${this.task.getCreatedAt().toLocaleString()} | <strong class="due-date">Vencimento: ${formattedDate}</strong>`
-        );
+        if (!html.includes('due-date')) {
+            html = html.replace(
+                `Criada em: ${this.task.getCreatedAt().toLocaleString()}`,
+                `Criada em: ${this.task.getCreatedAt().toLocaleString()} | <strong class="due-date">Vencimento: ${formattedDate}</strong>`
+            );
+        }
+        return html;
+    }
+}
+
+
+/**
+ * Decorador para adicionar data de vencimento a uma tarefa
+ */
+class NotProgressableDecorator extends TaskDecorator {
+    constructor(task, dueDate) {
+        super(task);
+    }
+    
+    getHtmlRepresentation() {
+        let html = this.task.getHtmlRepresentation();
+        
+        const wrapper = document.createElement('div');
+        wrapper.innerHTML = html;
+
+        const btnGroup = wrapper.querySelector('.btn-group');
+        console.log(btnGroup);
+
+        const buttons = btnGroup.querySelectorAll('button');
+        console.log(buttons);
+
+        for (const button of buttons) {
+            if (button.getAttribute('data-status') === 'em_andamento') {
+                button.remove();
+            }
+        }
+
+        html = wrapper.innerHTML;
         return html;
     }
 }

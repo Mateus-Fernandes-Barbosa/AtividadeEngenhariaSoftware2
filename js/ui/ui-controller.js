@@ -30,6 +30,10 @@ class UIController {
         if (document.getElementById('log-observer').checked) {
             this.taskSubject.addObserver(new LogObserver(this.addNotification.bind(this)));
         }
+        
+        if (document.getElementById('api-observer').checked) {
+            this.taskSubject.addObserver(new ApiObserver(this.addNotification.bind(this)));
+        }
     }
     
     // Configurar manipuladores de eventos para a interface do usuário
@@ -62,6 +66,7 @@ class UIController {
         document.getElementById('screen-observer').addEventListener('change', this.updateObservers.bind(this));
         document.getElementById('email-observer').addEventListener('change', this.updateObservers.bind(this));
         document.getElementById('log-observer').addEventListener('change', this.updateObservers.bind(this));
+        document.getElementById('api-observer').addEventListener('change', this.updateObservers.bind(this));
     }
     
     // Criar uma nova tarefa usando o Factory Method
@@ -128,6 +133,14 @@ class UIController {
             task = new HighPriorityDecorator(task);
         }
         
+        // Aplicar decorador de se duracao, se selecionado
+        if (document.getElementById('execution-trigger').checked) {
+            const dueDate = document.getElementById('execution-trigger').value;
+            if (dueDate) {
+                task = new NotProgressableDecorator(task, dueDate);
+            }
+        }
+
         // Aplicar decorador de etiqueta colorida, se selecionado
         if (document.getElementById('color-label').checked) {
             const color = document.getElementById('color-select').value;
@@ -141,6 +154,8 @@ class UIController {
                 task = new DueDateDecorator(task, dueDate);
             }
         }
+
+
         
         // Atualizar a tarefa na lista
         const index = this.tasks.findIndex(t => t.getId() === taskId);

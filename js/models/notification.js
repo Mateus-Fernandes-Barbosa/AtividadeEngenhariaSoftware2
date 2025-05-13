@@ -38,6 +38,10 @@ class Notification {
                 typeClass = 'notification-log';
                 icon = '📝';
                 break;
+            case 'api':
+                typeClass = 'api-log';
+                icon = 'A';
+                break;
         }
         
         return `

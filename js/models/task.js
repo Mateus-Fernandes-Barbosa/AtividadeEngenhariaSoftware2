@@ -46,10 +46,7 @@ class Task {
                 <p class="mb-1">${this.getDescription()}</p>
                 <small>Criada em: ${this.createdAt.toLocaleString()}</small>
                 <div class="d-flex justify-content-between align-items-center mt-2">
-                    <div>
-                        <span class="badge bg-secondary">${this.getType()}</span>
-                    </div>
-                    
+                    <span class="badge bg-secondary">${this.getType()}</span>
                     <div class="btn-group">
                         <button class="btn btn-sm btn-outline-primary status-btn" data-task-id="${this.id}" data-status="em_andamento">Em Andamento</button>
                         <button class="btn btn-sm btn-outline-success status-btn" data-task-id="${this.id}" data-status="concluida">Concluída</button>
@@ -104,5 +101,16 @@ class StudyTask extends Task {
 }
 
 /**
- * Classe para tarefas de 
+ * Classe para lembretes pessoais
  */
+
+class Reminder extends Task {
+    getType() {
+        return 'Lembrete';
+    }
+
+    getHtmlRepresentation() {
+        const baseHtml = super.getHtmlRepresentation();
+        return baseHtml.replace('list-group-item task-item', 'list-group-item task-item task-reminder');
+    }
+}

@@ -109,3 +109,26 @@ class LogObserver extends Observer {
         this.notificationCallback(new Notification(message, 'log'));
     }
 }
+
+/**
+ * Observador que faz log no console
+ */
+class ApiObserver extends Observer {
+    constructor(notificationCallback) {
+        super();
+        this.notificationCallback = notificationCallback;
+    }
+    
+    update(task, status) {
+        const statusText = status === 'em_andamento' ? 'em andamento' : status;
+        const timestamp = new Date().toISOString();
+        const message = `API [${timestamp}]: Tarefa #${task.getId()} "${task.getTitle()}" mudou status para "${statusText}"`;
+        
+        // Registrar no console
+        console.log(message);
+        
+        // Adicionar à lista de notificações
+        this.notificationCallback(new Notification(message, 'api'));
+    }
+}
+
