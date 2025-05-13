@@ -115,7 +115,7 @@ class ColorLabelDecorator extends TaskDecorator {
         }
 
         if (existingLabels) {
-            const firstLabel = existingLabels[0];
+            const firstLabel = wrapper.querySelector('span.badge'); //Get first after removal
             const newlabel = document.createElement('span');
             newlabel.className = `badge label-${this.color} me-2`;
             newlabel.textContent = this.getColorName();
